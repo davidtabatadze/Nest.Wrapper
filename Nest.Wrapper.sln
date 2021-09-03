@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31424.327
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nest.Wrapper", "Nest.Wrapper\Nest.Wrapper.csproj", "{9ECBA2AD-D1AA-4BD7-875F-9FDDFC64DB8E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nest.Wrapper.Test", "Nest.Wrapper.Test\Nest.Wrapper.Test.csproj", "{F93A268A-E4D0-4783-A2E4-877C12308875}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9ECBA2AD-D1AA-4BD7-875F-9FDDFC64DB8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ECBA2AD-D1AA-4BD7-875F-9FDDFC64DB8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9ECBA2AD-D1AA-4BD7-875F-9FDDFC64DB8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9ECBA2AD-D1AA-4BD7-875F-9FDDFC64DB8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F93A268A-E4D0-4783-A2E4-877C12308875}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F93A268A-E4D0-4783-A2E4-877C12308875}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F93A268A-E4D0-4783-A2E4-877C12308875}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F93A268A-E4D0-4783-A2E4-877C12308875}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {701BA126-1C1A-4D56-937A-3631CE820326}
+	EndGlobalSection
+EndGlobal
