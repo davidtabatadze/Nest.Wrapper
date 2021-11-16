@@ -2,6 +2,25 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Authors>David Tabatadze</Authors>
+    <Company>David Tabatadze</Company>
+    <Description>.net core Nest ElasticClient wrapper</Description>
+    <Copyright>Copyright (c) 2021 David Tabatadze</Copyright>
+    <RepositoryType>C#</RepositoryType>
+    <PackageProjectUrl>https://github.com/davidtabatadze/Nest.Wrapper</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/davidtabatadze/Nest.Wrapper</RepositoryUrl>
+    <PackageTags>.net core elastic search wrapper david tabatadze</PackageTags>
+    <PackageReleaseNotes>Elastic Context
+Elastic Entity
+Elastic CRUD
+</PackageReleaseNotes>
+    <NeutralLanguage>ka-GE</NeutralLanguage>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NEST" Version="7.15.2" />
+  </ItemGroup>
 
 </Project>
