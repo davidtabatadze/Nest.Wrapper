@@ -14,12 +14,34 @@ namespace Nest.Wrapper
     {
 
         /// <summary>
-        /// Ending class lifecycle ???
+        /// Dispose
         /// </summary>
-        public virtual void Dispose()
+        public void Dispose()
         {
-            ConnectionObject = null;
+            // Dispose of unmanaged resources.
+            Dispose(true);
+            // Suppress finalization.
             GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose
+        /// </summary>
+        /// <param name="disposing">We are disposing or not</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (Disposed)
+            {
+                return;
+            }
+            // If disposing
+            if (disposing)
+            {
+                Mappings = null;
+                Configuration = null;
+                ConnectionObject = null;
+            }
+            Disposed = true;
         }
 
         /// <summary>
@@ -45,9 +67,14 @@ namespace Nest.Wrapper
         }
 
         /// <summary>
+        /// Either disposed or not
+        /// </summary>
+        private bool Disposed = false;
+
+        /// <summary>
         /// Class type to elastic index connection dictionary
         /// </summary>
-        private readonly Dictionary<string, Type> Mappings = new Dictionary<string, Type> { };
+        private Dictionary<string, Type> Mappings = new Dictionary<string, Type> { };
 
         /// <summary>
         /// Configuration object

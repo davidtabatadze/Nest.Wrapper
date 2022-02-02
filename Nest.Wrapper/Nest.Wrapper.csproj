@@ -7,7 +7,7 @@
     <Authors>David Tabatadze</Authors>
     <Company>David Tabatadze</Company>
     <Description>.net core Nest ElasticClient wrapper</Description>
-    <Copyright>Copyright (c) 2021 David Tabatadze</Copyright>
+    <Copyright>Copyright (c) 2022 David Tabatadze</Copyright>
     <RepositoryType>C#</RepositoryType>
     <PackageProjectUrl>https://github.com/davidtabatadze/Nest.Wrapper</PackageProjectUrl>
     <RepositoryUrl>https://github.com/davidtabatadze/Nest.Wrapper</RepositoryUrl>
@@ -17,6 +17,7 @@ Elastic Entity
 Elastic CRUD
 </PackageReleaseNotes>
     <NeutralLanguage>ka-GE</NeutralLanguage>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
