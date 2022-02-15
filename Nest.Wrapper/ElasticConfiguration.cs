@@ -14,6 +14,11 @@ namespace Nest.Wrapper
         /// </summary>
         public string Server { get; set; }
 
+        /// <summary>
+        /// Either save null values or not
+        /// </summary>
+        public bool IncludeNullValues { get; set; }
+
     }
 
 }

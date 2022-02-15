@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using Elasticsearch.Net;
 
 namespace Nest.Wrapper
@@ -95,9 +96,17 @@ namespace Nest.Wrapper
             {
                 if (ConnectionObject == null)
                 {
-                    var settings = new ConnectionSettings(new Uri(Configuration.Server))
-                                   .RequestTimeout(new TimeSpan(0, 10, 0))
-                                   .DisableDirectStreaming(true);
+                    var pool = new SingleNodeConnectionPool(new Uri(Configuration.Server));
+                    var settings = new ConnectionSettings(
+                        pool, sourceSerializer: (builtin, settings) =>
+                            new JsonNetSerializer.JsonNetSerializer(builtin, settings, () =>
+                                new JsonSerializerSettings
+                                {
+                                    NullValueHandling = Configuration.IncludeNullValues ? NullValueHandling.Include : NullValueHandling.Ignore
+                                }
+                                //resolver => resolver.NamingStrategy = new CamelCaseNamingStrategy() //new SnakeCaseNamingStrategy()
+                            )
+                    ).RequestTimeout(new TimeSpan(0, 10, 0)).DisableDirectStreaming(true); // https://stackoverflow.com/questions/38294637/how-do-i-view-the-rest-json-created-by-the-nest-api
                     foreach (var mapping in Mappings)
                     {
                         settings.DefaultMappingFor(mapping.Value, map => map.IndexName(mapping.Key));
