@@ -19,6 +19,11 @@ namespace Nest.Wrapper
         /// </summary>
         public bool IncludeNullValues { get; set; }
 
+        /// <summary>
+        /// Timeout per request, in case of 0 default is 10
+        /// </summary>
+        public ushort RequestTimeOutMinutes { get; set; }
+
     }
 
 }

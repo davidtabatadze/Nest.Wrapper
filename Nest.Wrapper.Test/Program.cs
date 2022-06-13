@@ -36,7 +36,14 @@ namespace Nest.Wrapper.Test
                     new ElasticConfiguration
                     {
                         Server = "http://development.elasticsearch-01.private.optio.ai:9200/"
-                    },
+                    }
+                    //new Dictionary<string, Type>
+                    //{
+                    //    { "datiko-test-longs", typeof(TestEntityLong) },
+                    //    { "datiko-test-strings", typeof(TestEntityString) }
+                    //}
+                );
+                elastic.SetMappings(
                     new Dictionary<string, Type>
                     {
                         { "datiko-test-longs", typeof(TestEntityLong) },
@@ -325,7 +332,7 @@ namespace Nest.Wrapper.Test
 
                 Console.WriteLine(Check(check.All(i => i == "=OK= ")) + " delete");
 
-                Console.WriteLine("\n\nOOK");
+                Console.WriteLine("\n\nOOK Done");
                 Console.ReadKey();
 
             }

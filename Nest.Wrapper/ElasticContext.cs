@@ -38,9 +38,8 @@ namespace Nest.Wrapper
             // If disposing
             if (disposing)
             {
-                Mappings = null;
-                Configuration = null;
-                ConnectionObject = null;
+                //Mappings = null;
+                //ConnectionObject = null;
             }
             Disposed = true;
         }
@@ -50,21 +49,26 @@ namespace Nest.Wrapper
         /// </summary>
         /// <param name="configuration">Configuration <see cref="ElasticConfiguration"/></param>
         /// <param name="mappings">Entity mappings: class type to elastic index connection</param>
-        public ElasticContext(ElasticConfiguration configuration, Dictionary<string, Type> mappings)
+        public ElasticContext(ElasticConfiguration configuration, Dictionary<string, Type> mappings = null)
         {
             // ...
             Configuration = configuration;
-            // Defining mappings
-            foreach (var mapping in mappings)
+            if (Configuration.RequestTimeOutMinutes <= 0)
             {
-                // Validation
-                ElasticHelper.ValidateElasticEntity(mapping.Value);
-                // ... If mapping is not present yet
-                if (!Mappings.ContainsKey(mapping.Key))
-                {
-                    Mappings.Add(mapping.Key, mapping.Value);
-                }
+                Configuration.RequestTimeOutMinutes = 10;
             }
+            // Defining mappings
+            SetMappings(mappings);
+            //foreach (var mapping in mappings)
+            //{
+            //    // Validation
+            //    ElasticHelper.ValidateElasticEntity(mapping.Value);
+            //    // ... If mapping is not present yet
+            //    if (!Mappings.ContainsKey(mapping.Key))
+            //    {
+            //        Mappings.Add(mapping.Key, mapping.Value);
+            //    }
+            //}
         }
 
         /// <summary>
@@ -75,12 +79,17 @@ namespace Nest.Wrapper
         /// <summary>
         /// Class type to elastic index connection dictionary
         /// </summary>
-        private Dictionary<string, Type> Mappings = new Dictionary<string, Type> { };
+        private readonly Dictionary<string, Type> Mappings = new Dictionary<string, Type> { };
 
         /// <summary>
         /// Configuration object
         /// </summary>
-        private ElasticConfiguration Configuration { get; set; }
+        private readonly ElasticConfiguration Configuration = null;
+
+        /// <summary>
+        /// Thread locker
+        /// </summary>
+        private static readonly object padlock = new object();
 
         /// <summary>
         /// Connection object
@@ -88,33 +97,72 @@ namespace Nest.Wrapper
         private ElasticClient ConnectionObject { get; set; }
 
         /// <summary>
-        /// Configured conection
+        /// Configured singleton conection
         /// </summary>
         public ElasticClient Connection
         {
             get
             {
+                // If connection is not ready yet...
                 if (ConnectionObject == null)
                 {
-                    var pool = new SingleNodeConnectionPool(new Uri(Configuration.Server));
-                    var settings = new ConnectionSettings(
-                        pool, sourceSerializer: (builtin, settings) =>
-                            new JsonNetSerializer.JsonNetSerializer(builtin, settings, () =>
-                                new JsonSerializerSettings
-                                {
-                                    NullValueHandling = Configuration.IncludeNullValues ? NullValueHandling.Include : NullValueHandling.Ignore
-                                }
-                                //resolver => resolver.NamingStrategy = new CamelCaseNamingStrategy() //new SnakeCaseNamingStrategy()
-                            )
-                    ).RequestTimeout(new TimeSpan(0, 10, 0)).DisableDirectStreaming(true); // https://stackoverflow.com/questions/38294637/how-do-i-view-the-rest-json-created-by-the-nest-api
-                    foreach (var mapping in Mappings)
+                    // Locking the streams
+                    lock (padlock)
                     {
-                        settings.DefaultMappingFor(mapping.Value, map => map.IndexName(mapping.Key));
+                        // Doublecheking the connection
+                        if (ConnectionObject == null)
+                        {
+                            // Creating pool
+                            var pool = new SingleNodeConnectionPool(new Uri(Configuration.Server));
+                            // Creating settings
+                            var settings = new ConnectionSettings(
+                                pool, sourceSerializer: (builtin, settings) =>
+                                    new JsonNetSerializer.JsonNetSerializer(builtin, settings, () =>
+                                        new JsonSerializerSettings
+                                        {
+                                            NullValueHandling = Configuration.IncludeNullValues ? NullValueHandling.Include : NullValueHandling.Ignore
+                                        }
+                                    //resolver => resolver.NamingStrategy = new CamelCaseNamingStrategy() //new SnakeCaseNamingStrategy()
+                                    )
+                            ).RequestTimeout(new TimeSpan(0, Configuration.RequestTimeOutMinutes, 0)).DisableDirectStreaming(true); // https://stackoverflow.com/questions/38294637/how-do-i-view-the-rest-json-created-by-the-nest-api
+                            // Setting entities
+                            foreach (var mapping in Mappings)
+                            {
+                                settings.DefaultMappingFor(mapping.Value, map => map.IndexName(mapping.Key));
+                            }
+                            // Creating client
+                            ConnectionObject = new ElasticClient(settings);
+                        }
                     }
-                    ConnectionObject = new ElasticClient(settings);
                 }
                 // Returning as singleton
                 return ConnectionObject;
+            }
+        }
+
+        /// <summary>
+        /// Setting Entity mappings
+        /// </summary>
+        /// <param name="mappings">Class type to elastic index connection</param>
+        /// <example>{ "my-index", typeof(MyEntity) }</example>
+        public void SetMappings(Dictionary<string, Type> mappings)
+        {
+            // If only mappings are presented
+            if (mappings != null)
+            {
+                // For each mapping ...
+                foreach (var mapping in mappings)
+                {
+                    // Validation
+                    ElasticHelper.ValidateElasticEntity(mapping.Value);
+                    // ... If mapping is not present yet
+                    if (!Mappings.ContainsKey(mapping.Key))
+                    {
+                        Mappings.Add(mapping.Key, mapping.Value);
+                    }
+                }
+                // Resetting singleton connection
+                ConnectionObject = null;
             }
         }
 
