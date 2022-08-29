@@ -6,7 +6,7 @@ namespace Nest.Wrapper
     /// <summary>
     /// Represents annotations for the wrapper
     /// </summary>
-    internal class ElasticAnnotation
+    internal sealed class ElasticAnnotation
     {
 
         /// <summary>
@@ -23,6 +23,11 @@ namespace Nest.Wrapper
         /// Entity exists
         /// </summary>
         public const string EntityExists = "Unable to insert record(s). Corresponding id(s) already exists.";
+
+        /// <summary>
+        /// Dublicate indices
+        /// </summary>
+        public const string DublicateIndices = "Dublicate indices. Unique names should be provided when configuring the indices.";
 
     }
 

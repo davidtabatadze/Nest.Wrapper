@@ -23,6 +23,15 @@ namespace Nest.Wrapper.Test
             public DateTime? Date { get; set; }
         }
 
+        class Dodolina : ElasticEntity<long>
+        {
+            public string Name { get; set; }
+            public DateTime Date { get; set; }
+            public bool Ok { get; set; }
+            public Dictionary<string, string> Dict { get; set; }
+            public dynamic Obj { get; set; }
+        }
+
         class SomeGeneric
         {
             public string Name { get; set; }
@@ -41,6 +50,8 @@ namespace Nest.Wrapper.Test
             return result ? "=OK= " : "!!!! ";
         }
 
+
+
         static async Task Main(string[] args)
         {
             try
@@ -56,18 +67,53 @@ namespace Nest.Wrapper.Test
                     //    { "datiko-test-strings", typeof(TestEntityString) }
                     //}
                 );
-                elastic.SetMappings(
-                    new Dictionary<string, Type>
-                    {
-                        { "datiko-test-longs", typeof(TestEntityLong) },
-                        { "datiko-test-strings", typeof(TestEntityString) },
-                        { "datiko-test-generic", typeof(TestEntityGeneric) }
+
+                //elastic.SetMappings(
+                //    new Dictionary<string, Type>
+                //    {
+                //        { "datiko-test-longs", typeof(TestEntityLong) },
+                //        { "datiko-test-strings", typeof(TestEntityString) },
+                //        //{ "datiko-test-generic", typeof(TestEntityGeneric) },
+
+
+                //        { "datiko.dodolina", typeof(Dodolina) }
+                //    }
+                //);
+
+                elastic.ConfigureIndices(new List<ElasticIndexConfiguration>
+                {
+                    new ElasticIndexConfiguration{
+
+                        Name = "datiko.dodolina",
+                        ModelType = typeof(Dodolina),
+                        Configuration = index => index
+                                            .Settings(s=>s.NumberOfReplicas(0).NumberOfShards(1))
+                                            .Map<Dodolina>(m=>m
+                                                .Properties(p=>p
+                                                    .Keyword(k=>k.Name(n=>n.Id))
+                                                    .Keyword(k=>k.Name(n=>n.Name))
+                                                    .Date(k=>k.Name(n=>n.Date))
+                                                    .Nested<Dictionary<string, string>>(k=>k.Name(n=>n.Dict))
+                                                    .Nested<dynamic>(k=>k.Name(n=>n.Obj))
+                                                )
+                                            )
+
                     }
-                );
+                });
+
                 var connection = elastic.Connection;
 
 
-                await elastic.Insert(new TestEntityGeneric<SomeGeneric> { Id = 999, Data = new List<SomeGeneric> { } });
+                //await elastic.Insert(new TestEntityGeneric<SomeGeneric> { Id = 999, Data = new List<SomeGeneric> { } });
+                await elastic.Insert(new Dodolina
+                {
+                    Id = 123456789,
+                    Name = "lina",
+                    Date = DateTime.Now.AddDays(999),
+                    Ok = true,
+                    Dict = new Dictionary<string, string> { { "foo", "bar" } },
+                    Obj = new { a = 1, b = "2" }
+                });
                 var x = 0;
 
 

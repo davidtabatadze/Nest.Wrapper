@@ -6,7 +6,7 @@ namespace Nest.Wrapper
     /// <summary>
     /// Represents additinal functionality for the wrapper
     /// </summary>
-    public class ElasticHelper
+    public sealed class ElasticHelper
     {
 
         /// <summary>

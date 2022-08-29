@@ -167,6 +167,46 @@ namespace Nest.Wrapper
         }
 
         /// <summary>
+        /// Configuring elastic indices
+        /// </summary>
+        /// <param name="indices">indices</param>
+        public void ConfigureIndices(List<ElasticIndexConfiguration> indices)
+        {
+            // If only indices are presented
+            if (indices != null)
+            {
+                // Initial validation
+                if (indices.Select(index => index.Name).Distinct().Count() < indices.Count)
+                {
+                    throw new ElasticException(ElasticAnnotation.DublicateIndices);
+                }
+                // Setting Entity mappings
+                SetMappings(indices.ToDictionary(index => index.Name, index => index.ModelType));
+                // Configuring indices
+                foreach (var index in indices)
+                {
+                    var name = index.Name;
+                    var type = index.ModelType;
+                    // Checking existance
+                    var existance = Connection.Indices.Exists(name);
+                    if (!existance.IsValid)
+                    {
+                        throw new ElasticException(existance.DebugInformation);
+                    }
+                    // Creating new index
+                    if (!existance.Exists)
+                    {
+                        var response = Connection.Indices.Create(name, index.Configuration);
+                        if (!response.IsValid)
+                        {
+                            throw new ElasticException(response.DebugInformation);
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Extracts keys from IElasticEntityKeyables
         /// </summary>
         /// <typeparam name="E">Entity type</typeparam>
@@ -195,7 +235,7 @@ namespace Nest.Wrapper
         //    var result = await query;
         //    if (!result.IsValid)
         //    {
-        //        throw new Exception(result.DebugInformation);
+        //        throw new ElasticException(result.DebugInformation);
         //    }
         //    return result;
         //}
@@ -204,7 +244,7 @@ namespace Nest.Wrapper
         //    var result = await query;
         //    if (!result.IsValid)
         //    {
-        //        throw new Exception(result.DebugInformation);
+        //        throw new ElasticException(result.DebugInformation);
         //    }
         //    return result;
         //}
@@ -213,7 +253,7 @@ namespace Nest.Wrapper
         //    var result = await query;
         //    if (!result.IsValid)
         //    {
-        //        throw new Exception(result.DebugInformation);
+        //        throw new ElasticException(result.DebugInformation);
         //    }
         //    return result;
         //}
@@ -231,13 +271,13 @@ namespace Nest.Wrapper
                 var result = await query;
                 if (!result.IsValid)
                 {
-                    throw new Exception(result.DebugInformation);
+                    throw new ElasticException(result.DebugInformation);
                 }
                 return result;
             }
             catch (ArgumentException exception)
             {
-                throw new Exception(
+                throw new ElasticException(
                     string.Format("Wrapper: {0}.\nRaw: {1}", ElasticAnnotation.EntityNotMapped, exception.Message)
                 );
             }
@@ -273,7 +313,7 @@ namespace Nest.Wrapper
             var existings = await Load<E>(ExtractKeys(entities), 1, fields => fields.Includes(includes => includes.Field("id")));
             if (existings.Count > 0)
             {
-                throw new Exception(ElasticAnnotation.EntityExists);
+                throw new ElasticException(ElasticAnnotation.EntityExists);
             }
             await Save(entities, true);
         }
