@@ -23,6 +23,19 @@ namespace Nest.Wrapper.Test
             public DateTime? Date { get; set; }
         }
 
+        class SomeGeneric
+        {
+            public string Name { get; set; }
+        }
+        class TestEntityGeneric
+        {
+            public long Id { get; set; }
+        }
+        class TestEntityGeneric<T> : TestEntityGeneric, IElasticEntityKeyable<long>
+        {
+            public List<T> Data { get; set; }
+        }
+
         static string Check(bool result)
         {
             return result ? "=OK= " : "!!!! ";
@@ -47,10 +60,16 @@ namespace Nest.Wrapper.Test
                     new Dictionary<string, Type>
                     {
                         { "datiko-test-longs", typeof(TestEntityLong) },
-                        { "datiko-test-strings", typeof(TestEntityString) }
+                        { "datiko-test-strings", typeof(TestEntityString) },
+                        { "datiko-test-generic", typeof(TestEntityGeneric) }
                     }
                 );
                 var connection = elastic.Connection;
+
+
+                await elastic.Insert(new TestEntityGeneric<SomeGeneric> { Id = 999, Data = new List<SomeGeneric> { } });
+                var x = 0;
+
 
                 await elastic.Delete<TestEntityLong>();
                 await elastic.Delete<TestEntityString>();
