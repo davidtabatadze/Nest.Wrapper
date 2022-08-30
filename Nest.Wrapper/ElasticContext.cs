@@ -189,12 +189,12 @@ namespace Nest.Wrapper
                     var type = index.ModelType;
                     // Checking existance
                     var existance = Connection.Indices.Exists(name);
-                    if (!existance.IsValid)
-                    {
-                        throw new ElasticException(existance.DebugInformation);
-                    }
+                    //if (!existance.IsValid)
+                    //{
+                    //    throw new ElasticException(existance.DebugInformation);
+                    //}
                     // Creating new index
-                    if (!existance.Exists)
+                    if (existance.IsValid == false || existance.Exists == false)
                     {
                         var response = Connection.Indices.Create(name, index.Configuration);
                         if (!response.IsValid)
