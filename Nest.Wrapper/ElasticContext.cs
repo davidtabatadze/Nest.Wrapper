@@ -422,10 +422,11 @@ namespace Nest.Wrapper
         /// <remarks>Using null parameter will try to load all records</remarks>
         public async Task<List<E>> Load<E>(Func<SearchDescriptor<E>, ISearchRequest> selector = null) where E : class, IElasticEntityKeyable
         {
-            //if (selector == null)
-            //{
-            //    selector = selector => selector.MatchAll();
-            //}
+            if (selector == null)
+            {
+                selector = selector => selector.Size(1000000)//.MatchAll();
+                                               .Query(query => query.MatchAll());
+            }
             Func<SearchDescriptor<E>, ISearchRequest> hitter = descriptor => descriptor.TrackTotalHits(false);
             var result = await Execute(Connection.SearchAsync(selector + hitter));
             return result.Documents.ToList();

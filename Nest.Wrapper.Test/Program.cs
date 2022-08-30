@@ -45,6 +45,13 @@ namespace Nest.Wrapper.Test
             public List<T> Data { get; set; }
         }
 
+        public class RuleCleanerModel : IElasticEntityKeyable<string>
+        {
+            public string Id { get; set; }
+            public string Kind { get; set; }
+
+        }
+
         static string Check(bool result)
         {
             return result ? "=OK= " : "!!!! ";
@@ -98,10 +105,32 @@ namespace Nest.Wrapper.Test
                                                 )
                                             )
 
+                    },
+                    new ElasticIndexConfiguration{
+
+                        Name = "optio.cloud.rule-cleaners",
+                        ModelType = typeof(RuleCleanerModel),
+                        Configuration = configuration => configuration
+                            .Settings(settings => settings
+                                .NumberOfShards(1)
+                                .NumberOfReplicas(0)
+                                .Setting(UpdatableIndexSettings.MaxResultWindow, 1000000)
+                                .Setting(UpdatableIndexSettings.MaxInnerResultWindow, 1000000)
+                            )
+                            .Map<RuleCleanerModel>(map => map
+                                .Properties(properties => properties
+                                    .Keyword(keyword => keyword.Name(name => name.Id))
+                                    .Keyword(keyword => keyword.Name(name => name.Kind))
+                                )
+                            )
+
                     }
                 });
 
                 var connection = elastic.Connection;
+
+
+                var all1 = await elastic.Load<RuleCleanerModel>();
 
 
                 //await elastic.Insert(new TestEntityGeneric<SomeGeneric> { Id = 999, Data = new List<SomeGeneric> { } });
