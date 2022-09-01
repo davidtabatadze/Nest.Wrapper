@@ -127,7 +127,7 @@ namespace Nest.Wrapper
                                     //resolver => resolver.NamingStrategy = new CamelCaseNamingStrategy() //new SnakeCaseNamingStrategy()
                                     )
                             ).RequestTimeout(new TimeSpan(0, Configuration.RequestTimeOutMinutes, 0))
-                             .BasicAuthentication(Configuration.UserName, Configuration.Password)
+                             .BasicAuthentication(Configuration.User, Configuration.Password)
                              .DisableDirectStreaming(true);
                             // Setting entities
                             foreach (var mapping in Mappings)
