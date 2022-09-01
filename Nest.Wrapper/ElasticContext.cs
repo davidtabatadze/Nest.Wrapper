@@ -113,7 +113,9 @@ namespace Nest.Wrapper
                         if (ConnectionObject == null)
                         {
                             // Creating pool
-                            var pool = new SingleNodeConnectionPool(new Uri(Configuration.Server));
+                            var nodes = Configuration.Nodes.Select(node => new Uri(node));
+                            //var pool = new SingleNodeConnectionPool(new Uri(Configuration.Server));
+                            var pool = new StaticConnectionPool(nodes);
                             // Creating settings
                             var settings = new ConnectionSettings(
                                 pool, sourceSerializer: (builtin, settings) =>
@@ -124,7 +126,9 @@ namespace Nest.Wrapper
                                         }
                                     //resolver => resolver.NamingStrategy = new CamelCaseNamingStrategy() //new SnakeCaseNamingStrategy()
                                     )
-                            ).RequestTimeout(new TimeSpan(0, Configuration.RequestTimeOutMinutes, 0)).DisableDirectStreaming(true); // https://stackoverflow.com/questions/38294637/how-do-i-view-the-rest-json-created-by-the-nest-api
+                            ).RequestTimeout(new TimeSpan(0, Configuration.RequestTimeOutMinutes, 0))
+                             .BasicAuthentication(Configuration.UserName, Configuration.Password)
+                             .DisableDirectStreaming(true);
                             // Setting entities
                             foreach (var mapping in Mappings)
                             {

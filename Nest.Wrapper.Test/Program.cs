@@ -66,7 +66,7 @@ namespace Nest.Wrapper.Test
                 var elastic = new ElasticContext(
                     new ElasticConfiguration
                     {
-                        Server = "http://development.elasticsearch-01.private.optio.ai:9200/"
+                        Nodes = new List<string> { "http://development.elasticsearch-01.private.optio.ai:9200/" }
                     }
                     //new Dictionary<string, Type>
                     //{
@@ -136,7 +136,7 @@ namespace Nest.Wrapper.Test
                 //await elastic.Insert(new TestEntityGeneric<SomeGeneric> { Id = 999, Data = new List<SomeGeneric> { } });
                 await elastic.Insert(new Dodolina
                 {
-                    Id = 123456789,
+                    Id = new Random().Next(1, 1000000),
                     Name = "lina",
                     Date = DateTime.Now.AddDays(999),
                     Ok = true,
@@ -198,7 +198,7 @@ namespace Nest.Wrapper.Test
                     var mapInvalid = new ElasticContext(
                         new ElasticConfiguration
                         {
-                            Server = "http://development.elasticsearch-01.private.optio.ai:9200/"
+                            Nodes = new List<string> { "http://development.elasticsearch-01.private.optio.ai:9200/" }
                         },
                         new Dictionary<string, Type>
                         {
@@ -220,7 +220,7 @@ namespace Nest.Wrapper.Test
                     var mapMiss = new ElasticContext(
                         new ElasticConfiguration
                         {
-                            Server = "http://development.elasticsearch-01.private.optio.ai:9200/"
+                            Nodes = new List<string> { "http://development.elasticsearch-01.private.optio.ai:9200/" }
                         },
                         new Dictionary<string, Type>
                         {

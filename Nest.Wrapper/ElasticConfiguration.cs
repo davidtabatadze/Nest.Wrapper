@@ -1,4 +1,4 @@
-﻿
+﻿using System.Collections.Generic;
 
 namespace Nest.Wrapper
 {
@@ -10,9 +10,19 @@ namespace Nest.Wrapper
     {
 
         /// <summary>
-        /// Server address
+        /// Server addresses - nodes
         /// </summary>
-        public string Server { get; set; }
+        public List<string> Nodes { get; set; }
+
+        /// <summary>
+        /// User name
+        /// </summary>
+        public string UserName { get; set; }
+
+        /// <summary>
+        /// Password
+        /// </summary>
+        public string Password { get; set; }
 
         /// <summary>
         /// Either save null values or not
