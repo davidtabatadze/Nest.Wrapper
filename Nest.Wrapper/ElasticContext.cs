@@ -404,6 +404,10 @@ namespace Nest.Wrapper
             //{
             //    fields = fields => fields.IncludeAll();
             //}
+            if (ids.Count() == 0)
+            {
+                return new List<E> { };
+            }
             return await Load<E>(
                 load => load
                 .Source(fields)
@@ -528,6 +532,7 @@ namespace Nest.Wrapper
                      .Id(new Id(new { id = entity.Key }))
                      .DocAsUpsert(upsert)
                      .Doc(entity.Value)
+                //.RetriesOnConflict(
                 ).Refresh(Refresh.WaitFor);
             }
             await Execute(Connection.BulkAsync(bulk));
@@ -614,14 +619,17 @@ namespace Nest.Wrapper
         /// <returns>Empty</returns>
         private async Task Delete<E>(IEnumerable<object> ids) where E : class, IElasticEntityKeyable
         {
-            await Delete<E>(delete => delete
-                .Query(query => query
-                    .Terms(terms => terms
-                        .Field("id")
-                        .Terms(ids)
+            if (ids.Count() > 0)
+            {
+                await Delete<E>(delete => delete
+                    .Query(query => query
+                        .Terms(terms => terms
+                            .Field("id")
+                            .Terms(ids)
+                        )
                     )
-                )
-            );
+                );
+            }
         }
 
         /// <summary>

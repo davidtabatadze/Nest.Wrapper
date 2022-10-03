@@ -132,6 +132,7 @@ namespace Nest.Wrapper.Test
 
                 var all1 = await elastic.Load<RuleCleanerModel>();
 
+                await elastic.Insert(new List<Dodolina> { });
 
                 //await elastic.Insert(new TestEntityGeneric<SomeGeneric> { Id = 999, Data = new List<SomeGeneric> { } });
                 await elastic.Insert(new Dodolina
