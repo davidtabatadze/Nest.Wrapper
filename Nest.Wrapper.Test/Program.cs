@@ -87,64 +87,49 @@ namespace Nest.Wrapper.Test
                 //    }
                 //);
 
-                elastic.ConfigureIndices(new List<ElasticIndexConfiguration>
-                {
-                    new ElasticIndexConfiguration{
+                //elastic.ConfigureIndices(new List<ElasticIndexConfiguration>
+                //{
+                //    new ElasticIndexConfiguration{
 
-                        Name = "datiko.dodolina",
-                        ModelType = typeof(Dodolina),
-                        Configuration = index => index
-                                            .Settings(s=>s.NumberOfReplicas(0).NumberOfShards(1))
-                                            .Map<Dodolina>(m=>m
-                                                .Properties(p=>p
-                                                    .Keyword(k=>k.Name(n=>n.Id))
-                                                    .Keyword(k=>k.Name(n=>n.Name))
-                                                    .Date(k=>k.Name(n=>n.Date))
-                                                    .Nested<Dictionary<string, string>>(k=>k.Name(n=>n.Dict))
-                                                    .Nested<dynamic>(k=>k.Name(n=>n.Obj))
-                                                )
-                                            )
+                //        Name = "datiko.dodolina",
+                //        ModelType = typeof(Dodolina),
+                //        Configuration = index => index
+                //                            .Settings(s=>s.NumberOfReplicas(0).NumberOfShards(1))
+                //                            .Map<Dodolina>(m=>m
+                //                                .Properties(p=>p
+                //                                    .Keyword(k=>k.Name(n=>n.Id))
+                //                                    .Keyword(k=>k.Name(n=>n.Name))
+                //                                    .Date(k=>k.Name(n=>n.Date))
+                //                                    .Nested<Dictionary<string, string>>(k=>k.Name(n=>n.Dict))
+                //                                    .Nested<dynamic>(k=>k.Name(n=>n.Obj))
+                //                                )
+                //                            )
 
-                    },
-                    new ElasticIndexConfiguration{
-
-                        Name = "optio.cloud.rule-cleaners",
-                        ModelType = typeof(RuleCleanerModel),
-                        Configuration = configuration => configuration
-                            .Settings(settings => settings
-                                .NumberOfShards(1)
-                                .NumberOfReplicas(0)
-                                .Setting(UpdatableIndexSettings.MaxResultWindow, 1000000)
-                                .Setting(UpdatableIndexSettings.MaxInnerResultWindow, 1000000)
-                            )
-                            .Map<RuleCleanerModel>(map => map
-                                .Properties(properties => properties
-                                    .Keyword(keyword => keyword.Name(name => name.Id))
-                                    .Keyword(keyword => keyword.Name(name => name.Kind))
-                                )
-                            )
-
-                    }
-                });
+                //    }
+                //});
 
                 var connection = elastic.Connection;
 
-
-                var all1 = await elastic.Load<RuleCleanerModel>();
-
                 await elastic.Insert(new List<Dodolina> { });
 
+                //await elastic.Insert(new Dodolina
+                //{
+                //    Id = new Random().Next(1, 1000000),
+                //    Name = "lina",
+                //    Date = DateTime.Now.AddDays(999),
+                //    Ok = true,
+                //    Dict = new Dictionary<string, string> { { "foo", "bar" } },
+                //    Obj = new { a = 1, b = "2" }
+                //});
+
+                await elastic.Delete<Dodolina>();
+
                 //await elastic.Insert(new TestEntityGeneric<SomeGeneric> { Id = 999, Data = new List<SomeGeneric> { } });
-                await elastic.Insert(new Dodolina
-                {
-                    Id = new Random().Next(1, 1000000),
-                    Name = "lina",
-                    Date = DateTime.Now.AddDays(999),
-                    Ok = true,
-                    Dict = new Dictionary<string, string> { { "foo", "bar" } },
-                    Obj = new { a = 1, b = "2" }
-                });
+                
                 var x = 0;
+
+
+                await elastic.Get<Dodolina>(777);
 
 
                 await elastic.Delete<TestEntityLong>();

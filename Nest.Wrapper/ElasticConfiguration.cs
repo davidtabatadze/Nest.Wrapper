@@ -15,6 +15,21 @@ namespace Nest.Wrapper
         public List<string> Nodes { get; set; }
 
         /// <summary>
+        /// Number of shards
+        /// </summary>
+        public uint NumberOfShards { get; set; }
+
+        /// <summary>
+        /// Number of replicas
+        /// </summary>
+        public uint NumberOfReplicas { get; set; }
+
+        /// <summary>
+        /// Max result window
+        /// </summary>
+        public uint MaxResultWindow { get; set; }
+
+        /// <summary>
         /// User name
         /// </summary>
         public string User { get; set; }

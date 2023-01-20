@@ -387,7 +387,7 @@ namespace Nest.Wrapper
         /// <returns>Entities</returns>
         public async Task<List<E>> Load<E>(IEnumerable<string> ids, Func<SourceFilterDescriptor<E>, ISourceFilter> fields = null) where E : class, IElasticEntityKeyable<string>
         {
-            return await Load(ids.Cast<object>(), 0, fields);
+            return await Load(ids.Cast<object>(), 0, fields); // ??? null ids?
         }
 
         /// <summary>
