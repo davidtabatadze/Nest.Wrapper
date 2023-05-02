@@ -128,7 +128,8 @@ namespace Nest.Wrapper
                                     )
                             ).RequestTimeout(new TimeSpan(0, Configuration.RequestTimeOutMinutes, 0))
                              .BasicAuthentication(Configuration.User, Configuration.Password)
-                             .DisableDirectStreaming(true);
+                             .DisableDirectStreaming(true)
+                             .EnableApiVersioningHeader(); // https://github.com/elastic/elasticsearch-net/issues/6154
                             // Setting entities
                             foreach (var mapping in Mappings)
                             {
@@ -193,10 +194,6 @@ namespace Nest.Wrapper
                     var type = index.ModelType;
                     // Checking existance
                     var existance = Connection.Indices.Exists(name);
-                    //if (!existance.IsValid)
-                    //{
-                    //    throw new ElasticException(existance.DebugInformation);
-                    //}
                     // Creating new index
                     if (existance.IsValid == false || existance.Exists == false)
                     {
